@@ -38,6 +38,6 @@
         </form>
         <br>
         <br>
-        No posees una cuenta? <a href= "FormularioRegistro.html" onclick="">Registrate aquí</a>
+       ¿No posees una cuenta? <a href= "FormularioRegistro.html" onclick="">Registrate aquí</a>
     </body>
 </html>
