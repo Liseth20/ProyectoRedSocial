@@ -14,6 +14,8 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -28,7 +30,7 @@ public class LGenero extends HttpServlet {
     private Connection con = mysql.Conectar();
     private String consulta = "";
 
-     //-----------------Mostrar datos desde la base de datos---------------------//
+    //-----------------Mostrar datos desde la base de datos---------------------//
     public List<DGenero> MostrarDatos() throws Exception {
         List<DGenero> generos = new ArrayList<>();
 
@@ -50,30 +52,25 @@ public class LGenero extends HttpServlet {
 
         return generos;
     }
+
     //-----------------Eliminar datos IGNORAR---------------------//
-    public String EliminarGenero(DGenero user) throws Exception {
-       
-        String result ="";
-        consulta = "DELETE * FROM GENERO_MUSICAL WHERE idGenero_musical= ?";
+    public void EliminarGenero(int id) throws Exception {
 
-       try {
-            PreparedStatement pst = con.prepareStatement(consulta);
+        consulta = "DELETE FROM GENERO_MUSICAL WHERE idGenero_musical=?";
+        PreparedStatement pst = con.prepareStatement(consulta);
+        try {
 
-            pst.setInt(1, user.getIdGenero_musical());
+            pst.setInt(1, id);
 
-            int n = pst.executeUpdate();
-
-            if (n != 0) {
-                result = "El registro se ha eliminado correctamente";
-            }
+            pst.execute();
 
         } catch (SQLException ex) {
-            result = "He ocurrido un error al eliminar el genero\n: " + ex.getMessage();
-        }
-        return result;
+            ex.printStackTrace();
+        } 
+
     }
-    
-     //-----------------Insertar genero---------------------//
+
+    //-----------------Insertar genero---------------------//
     public String InsertarGenero(String nombre, String descripcion) {
         String result = "";
 
@@ -96,25 +93,107 @@ public class LGenero extends HttpServlet {
         return result;
     }
 
+    public DGenero ObtenerDatos(String idGenero) throws Exception {
+        DGenero obj = null;
+        int codigo = Integer.parseInt(idGenero);
+
+        consulta = "SELECT * FROM GENERO_MUSICAL WHERE IDGENERO_MUSICAL=?";
+
+        try {
+            PreparedStatement st = con.prepareStatement(consulta);
+
+            st.setInt(1, codigo);
+
+            ResultSet rs = st.executeQuery();
+
+            if (rs.next()) {
+
+                int id = rs.getInt("idGenero_musical");
+                String nombre = rs.getString("Nombre");
+                String descripcion = rs.getString("Descripcion");
+
+                obj = new DGenero(id, nombre, descripcion);
+
+            } else {
+                throw new Exception("No hay datos");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return obj;
+
+    }
+
+    public void ActualizarGenero(DGenero GeneroActualizado) throws Exception {
+
+        consulta = "UPDATE GENERO_MUSICAL SET NOMBRE =?, DESCRIPCION=?"
+                + " WHERE IDGENERO_MUSICAL=?";
+
+        try {
+            PreparedStatement st = con.prepareStatement(consulta);
+
+            st.setString(1, GeneroActualizado.getNombre());
+            st.setString(2, GeneroActualizado.getDescripcion());
+            st.setInt(3, GeneroActualizado.getIdGenero_musical());
+
+            st.execute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-          try {
-         List<DGenero> TablaGeneros;
 
-            TablaGeneros = MostrarDatos();
+        String accion = request.getParameter("Accion");
 
-            //Agregar al request
-            request.setAttribute("Generos", TablaGeneros);
+        if (accion.equals("Mostrar")) {
+            try {
+                List<DGenero> TablaGeneros;
 
-            //Enviar al JSP
-            request.getRequestDispatcher("/EditorGeneros.jsp").forward(request, response);
+                TablaGeneros = MostrarDatos();
 
-           
-              } catch (Exception e) {
-            e.printStackTrace();
+                request.setAttribute("Generos", TablaGeneros);
 
+                request.getRequestDispatcher("/EditorGeneros.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
+        }
+
+        if (accion.equals("Cargar")) {
+            try {
+
+                String idGenero = request.getParameter("Codigo");
+
+                DGenero CodigoGenero = ObtenerDatos(idGenero);
+
+                request.setAttribute("GeneroActualizar", CodigoGenero);
+
+                request.getRequestDispatcher("/ActualizarGeneros.jsp").forward(request, response);
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if (accion.equals("Eliminar")) {
+
+            int idGenero = Integer.parseInt(request.getParameter("Codigo"));
+
+            try {
+                EliminarGenero(idGenero);
+
+                request.getRequestDispatcher("/PerfilAdmi.jsp").forward(request, response);
+            } catch (Exception ex) {
+                Logger.getLogger(LGenero.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
     }
@@ -122,26 +201,40 @@ public class LGenero extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
-        String accion = request.getParameter("Accion");
-       
-        //Obtener Datos
 
+        String accion = request.getParameter("Accion");
+
+        //Obtener Datos
         if (accion.equals("Insertar")) {
             String encabezado = request.getParameter("nombre");
             String noticia = request.getParameter("descripcion");
 
-             try {
+            try {
                 out.println(InsertarGenero(encabezado, noticia));
             } catch (Exception e) {
 
             }
-            
+
             request.getRequestDispatcher("/PerfilAdmi.jsp").forward(request, response);
-            
+
         }
-        
-      
+        if (accion.equals("Actualizar")) {
+
+            try {
+                int id = Integer.parseInt(request.getParameter("CodigoGenero"));
+                String nombre = request.getParameter("nombre");
+                String descripcion = request.getParameter("descripcion");
+
+                DGenero GeneroActualizado = new DGenero(id, nombre, descripcion);
+
+                ActualizarGenero(GeneroActualizado);
+
+                request.getRequestDispatcher("/PerfilAdmi.jsp").forward(request, response);
+            } catch (Exception ex) {
+                Logger.getLogger(LGenero.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
 
     }
 

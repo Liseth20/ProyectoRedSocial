@@ -13,13 +13,13 @@
     </head>
     <body>
 
-        <form action = "LGenero" method="get">  
-
+        <form action = "LGenero" method="GET">  
+            <input type="hidden" name="Accion" value="Mostrar">
             <h2> Bienvenido  </h2>
-            
+
             Ingresar al mantenimiento de generos
             <br> <br>
-            <input type="submit" name = "btnMantenimiento" id="button" value="Mantenimiento"/>
+            <input type="submit" name = "btnMantenimiento" value="Mantenimiento"/>
 
         </form>
 

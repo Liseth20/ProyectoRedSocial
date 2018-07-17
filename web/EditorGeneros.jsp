@@ -1,130 +1,101 @@
 
-<%@page import="Datos.DGenero"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.Connection"%>
 <%@page import="Logica.Conexion"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page import="java.util.*"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>EditorGeneros</title>
+
+        <style type="text/css">
+            .cabecera{
+                font-weight: bold;
+                background-color: #8258FA;
+            }  
+            .filas{
+                text-align:center;
+                background-color: #CECEF6;
+            }  
+
+            table{
+                float:left;    
+            }
+
+            #contenedorBoton{
+                margin-left: 650px;
+
+            }
+        </style>
+
     </head>
-    <%
-        //Generos del controlador
-        List<DGenero> generos = (List<DGenero>) request.getAttribute("Generos");
 
-
-    %>
     <body>
-
-        <h1> Bienvenido administrador al editor de generos </h1> 
+        <h1> Bienvenido al editor de generos </h1> 
 
         <h3>Lista de generos actuales</h3> 
 
         <table border="2" width="600">
 
-            <tr bgcolor="ed5151">
-                <th>Código</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-            </tr>
-            <% for (DGenero tempGeneros : generos) {%>
-            <tr>
-                <td> <%=tempGeneros.getIdGenero_musical()%> </td>
-                <td> <%=tempGeneros.getNombre()%> </td>
-                <td> <%=tempGeneros.getDescripcion()%> </td>
+            <tr >
+                <th class="cabecera"> Código</th>
+                <th class="cabecera">Nombre</th>
+                <th class="cabecera">Descripción</th>
+                <th class="cabecera">Acciones</th>
+
             </tr>
 
-            <% }%>  
+            <c:forEach var="tempGeneros" items="${Generos }">
 
-            <tr>
-                <th></th>
-                <th></th>
-                <th></th>
-            </tr>
+                <%-- Link actualizador para cada genero utilizando el campo clave --%>
+                <c:url var="linkCargar" value="LGenero">
+
+                    <c:param name="Accion" value="Cargar"></c:param>
+
+                    <c:param name="Codigo" value="${tempGeneros.getIdGenero_musical()}"></c:param>
+
+                </c:url>
+
+                <%-- Link para eliminar cada genero utilizando el campo clave --%>
+
+                <c:url var="linkEliminar" value="LGenero">
+
+                    <c:param name="Accion" value="Eliminar"></c:param>
+
+                    <c:param name="Codigo" value="${tempGeneros.getIdGenero_musical()}"></c:param>
+
+                </c:url>
+
+                <tr>
+                    <td class="filas"> ${tempGeneros.getIdGenero_musical() } </td>
+                    <td class="filas"> ${tempGeneros.getNombre() } </td>
+                    <td class="filas"> ${tempGeneros.getDescripcion() } </td>
+                    <td class="filas">  
+                        <a href="${linkCargar}"><img src="icons8-actualizar-15.png" width="15" height="15" alt="icons8-actualizar-15"/></a>
+                        &nbsp;
+                        <a href="${linkEliminar}"><img src="icons8-basura-32.png" width="20" height="20" alt="icons8-basura-32"/></a>
+                    </td>
+                </tr>
+
+            </c:forEach>
 
         </table>
 
-        <br> <br>
+        <%-- Contenedor --%>
 
-        <%-- Formulario insertar --%>
-        <form action = "InsertarGeneros.jsp" method="post">  
-            <input type="submit" name = "btnInsertar" id="button" value="Insertar"/>
-        </form>
+        <div id ="contenedorBoton">
 
-        <%-- Formulario Editar --%>
-        <form action = "LGenero" method="post">  
-            <input type="hidden" name="Accion" value="editar">
-            <input type="submit" name = "btnEditar" id="button" value="Editar"/>
-        </form>
+            <%-- Insertar --%>
+            <input type="button" name = "btnInsertar" value="Insertar" 
+                   onclick="window.location.href = 'InsertarGeneros.jsp'"/>
+            <br><br>          
 
-        <%-- Formulario Eliminar --%>
-        <form action = "LGenero" method="post">  
-            <input type="hidden" name="Accion" value="eliminar">
-            <input type="submit" name = "btnEliminar" id="button" value="Eliminar"/>
-        </form>
+        </div>
 
-        <%-- Formulario Actualizar --%>
-        <form action = "LGenero" method="post">  
-            <input type="hidden" name="Accion" value="actualizar">
-            <input type="submit" name = "btnActualizar" id="button" value="Actualizar"/>
-        </form>
-
-
-        <%--
-               <table border="2" width="600">
-
-            <tr bgcolor="ed5151">
-                <th>Código</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-            </tr>
-            
-           
-            <%
-                Conexion mysql = new Conexion();
-                Connection con = mysql.Conectar();
-                String consulta;
-                consulta = "SELECT * FROM `genero_musical`";
-
-                PreparedStatement st = con.prepareStatement(consulta);
-
-                ResultSet rs = st.executeQuery();
-                while (rs.next()) {
-            %>
-
-            <tr>
-                <th><%=rs.getString(1)%></th>
-                <th><%=rs.getString(2)%></th>
-                <th><%=rs.getString(3)%></th>
-            </tr>
-
-            <%
-                }
-
-                st.close();
-                rs.close();
-                con.close();
-
-            %>
-
-
-
-
-        </table>
-
-
-        <form action = "LGenero" method="post">  
-
-
-
-
-        </form>
-        --%>
     </body>
 </html>

@@ -9,7 +9,14 @@ public class DGenero {
 
     //-----------------------Declaración de constructores---------------------------//
     public DGenero(int _idGenero_musical, String _Nombre, String _Descripcion) {
+
         this._idGenero_musical = _idGenero_musical;
+        this._Nombre = _Nombre;
+        this._Descripcion = _Descripcion;
+    }
+
+    public DGenero(String _Nombre, String _Descripcion) {
+
         this._Nombre = _Nombre;
         this._Descripcion = _Descripcion;
     }
@@ -18,7 +25,6 @@ public class DGenero {
     }
 
     //-----------------------Declaración de getters y setters---------------------------//
-    
     public int getIdGenero_musical() {
         return _idGenero_musical;
     }
