@@ -17,6 +17,13 @@ public class DNoticias {
         this._Fecha = _Fecha;
         this._fk_usuario = _fk_usuario;
     }
+    
+     //-------------------Declaración de constructor para mostrar datos-----------------------//
+    public DNoticias(int _idNoticias, String _Titulo, String _Contenido) {
+        this._idNoticias = _idNoticias;
+        this._Titulo = _Titulo;
+        this._Contenido = _Contenido;
+   }
 
     public DNoticias() {
     }

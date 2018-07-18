@@ -1,6 +1,6 @@
 package Logica;
 
-import Datos.DUsuario;
+import Datos.DNoticias;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,6 +28,7 @@ public class LNoticias extends HttpServlet {
 
     //-----------------Insertar noticia---------------------//
     public String InsertarNoticia(String titulo, String contenido, String fecha, String usuario) {
+
         String result = "";
 
         //Se agregan los valores a la consulta, se ingresarán desde el jsp
@@ -47,17 +50,63 @@ public class LNoticias extends HttpServlet {
         return result;
     }
 
+    //-----------------Mostrar noticia---------------------//
+    public List<DNoticias> MostrarDatos() throws Exception {
+
+        List<DNoticias> noticias = new ArrayList<>();
+
+        consulta = "SELECT * FROM NOTICIAS";
+
+        PreparedStatement st = con.prepareStatement(consulta);
+
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()) {
+
+            int codigo = rs.getInt("idNoticias");
+            String nombre = rs.getString("Titulo");
+            String descripcion = rs.getString("Contenido");
+
+            DNoticias generoTemporal = new DNoticias(codigo, nombre, descripcion);
+            noticias.add(generoTemporal);
+        }
+
+        return noticias;
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+       
+        String id = request.getParameter("idUsuario");
+        String accion = request.getParameter("Accion");
+        if (accion.equals("Visualizar")) {
+            try {
+
+                List<DNoticias> TablaGeneros;
+
+                TablaGeneros = MostrarDatos();
+
+                request.setAttribute("Publicaciones", TablaGeneros);
+
+                request.setAttribute("idUsuario", id);
+
+                request.getRequestDispatcher("/VisualizarNoticia.jsp").forward(request, response);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
+        }
+
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String accion = request.getParameter("Accion");
         String id = request.getParameter("idUsuario");
+        String accion = request.getParameter("Accion");
 
         //----------------Ingresar una nueva noticia------------
         if (accion.equals("Escribir")) {
@@ -70,23 +119,26 @@ public class LNoticias extends HttpServlet {
             String fecha_publicacion = date.format(now);
 
             //InsertarNoticia(encabezado, noticia, fecha_publicacion, id);
-
-             try (PrintWriter out = response.getWriter()) {
-                out.println("Noticia " + InsertarNoticia(encabezado, noticia, fecha_publicacion, id));
+            try {
+                InsertarNoticia(encabezado, noticia, fecha_publicacion, id);
             } catch (Exception e) {
 
             }
-            
-            request.getRequestDispatcher("/VisualizarNoticia.jsp").forward(request, response);
-            
-           
+
+            request.getRequestDispatcher("/PaginaPrincipal.jsp").forward(request, response);
+
         }
 
-        //------------Dirigirse al formulario de escribir noticia--------------
-        
-        if (accion.equals("Iniciar")) {
-           request.setAttribute("id", id);
-            request.getRequestDispatcher("/Noticias.jsp").forward(request, response);
+        if (accion.equals("Ir")) {
+            try {
+
+                request.setAttribute("idUsuario", id);
+
+                request.getRequestDispatcher("/Noticias.jsp").forward(request, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
         }
 
     }

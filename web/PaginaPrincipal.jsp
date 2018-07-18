@@ -31,12 +31,12 @@
              <br>
         <br>
         
-        <%-- Formulario para escribir una noticia--%>
+        <%-- Formulario para ingresar al muro --Nuevo--%>
 
-          <form action = "LNoticias" method="post">
+          <form action = "LNoticias" method="get">
             <input type="hidden" name="idUsuario" value="${id}">
-            <input type="hidden" name="Accion" value="Iniciar">
-            <input type="submit" value="Escribir publicación">
+            <input type="hidden" name="Accion" value="Visualizar">
+            <input type="submit" value="Ingresar al muro">
 
         </form>
          
