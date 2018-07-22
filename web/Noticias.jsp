@@ -19,7 +19,7 @@
 
         <form action = "LNoticias" method="post">  
             
-            <input type="hidden" name="idUsuario" value="${idUsuario}">
+            <input type="hidden" name="id" value="${id}">
             <input type="hidden" name="Accion" value="Escribir">
             
             Título:

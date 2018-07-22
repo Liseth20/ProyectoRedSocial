@@ -1,4 +1,6 @@
-
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.PreparedStatement"%>
+<%@page import="java.sql.Connection"%>
 <%@page import="Logica.Conexion"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -8,55 +10,92 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="estilos.css"/>
-        
+        <%-- Fuentes de google--%>
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type=text/css>
+        <%-- Iconos--%>
+
+
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+        <%-- CSS--%>
+        <link rel="stylesheet" href="css/style.css"/>
+
         <title>Muro de publicaciones</title>
-        
+
     </head>
     <body>
 
         <h1> Muro de publicaciones </h1> 
 
-        <table border="0" width="600">
+        <c:forEach var="tempNoticia" items="${Publicaciones}">
 
-            <c:forEach var="tempNoticia" items="${Publicaciones}">
+            <%-- Link actualizador para cada genero utilizando el campo clave --%>
+            <c:url var="linkCargar" value="LNoticias">
+                
+                <c:param name="id" value="${id}"></c:param>
+                <c:param name="Accion" value="Cargar"></c:param>
+                <c:param name="Codigo" value="${tempNoticia.getIdNoticias()}"></c:param>
 
-                <tr>
-                    <td>${tempNoticia.getTitulo() }</td>
-                </tr>
+            </c:url>
 
-                <tr>
-                    <td> ${tempNoticia.getContenido() } </td>
-                </tr>
+            <%-- Link para eliminar cada genero utilizando el campo clave --%>
 
-                <tr>
-                    <td> <br> </td>
+            <c:url var="linkEliminar" value="LNoticias">
+               
+                <c:param name="id" value="${id}"></c:param>           
+                <c:param name="Accion" value="Eliminar"></c:param>
+                <c:param name="Codigo" value="${tempNoticia.getIdNoticias()}"></c:param>
 
-                </tr>
+            </c:url>
 
-                <tr>
-                    <td> <br> </td>
+            <%-- Cajas de publicaciones --%>
+            <div class="comments-container">
 
-                </tr>
+                <ul id="comments-list" class="comments-list">
 
+                    <li>
+                        <%-- Contenedor avatar--%>             
+                        <div class="comment-avatar">
+                            <img src="avatar.png" alt="avatar"/>
+                        </div>
 
-            </c:forEach>
+                        <%-- Contenedor noticia--%>
+                        <div class="comment-box">
 
-        </table>
+                            <%-- Contenedor cabecera--%>
+                            <div class="comment-head">
+                                <h6 class="comment-name">${tempNoticia.getTitulo() }</h6>
+                                <span> ${tempNoticia.getFecha() } </span>
+                                <a href="${linkEliminar}"><i class="fas fa-trash"></i></a> 
+                                <a href="${linkCargar}"><i class="fas fa-pencil-alt"></i></a> 
+                            </div>
+
+                            <%-- Contenedor de la descripcion--%>
+                            <div class="comment-content">
+                                ${tempNoticia.getContenido() }
+                            </div>
+
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </c:forEach>
 
         <br> 
 
+        <%-- Boton para escribir publicación --%>
         <form action = "LNoticias" method="post">  
 
-            <input type="hidden" name="idUsuario" value="${idUsuario}">
+            <input type="hidden" name="id" value="${id}">
 
             <input type="hidden" name="Accion" value="Ir">
 
-            <input type="submit" name = "btnPublicar" id="button" value="Escribir noticia"/>
+
+            <input class="button-style" type="submit" name = "btnPublicar" id="button" value="Escribir noticia"/>
+
+
+
 
         </form>
-
-
 
     </body>
 </html>

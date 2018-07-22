@@ -5,71 +5,57 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>EditorGeneros</title>
-
-        <style type="text/css">
-            .cabecera{
-                font-weight: bold;
-                background-color: #8258FA;
-            }  
-            .filas{
-                text-align:center;
-                background-color: #CECEF6;
-            }  
-
-            table{
-                float:left;    
-            }
-        </style>
-
+        <title>Albumes</title>
     </head>
-
     <body>
-        <h1> Bienvenido al editor de generos </h1> 
 
-        <h3>Lista de generos actuales</h3> 
+        <h1> Bienvenido al editor de albumes </h1> 
+
+        <h3>Lista de albumes </h3> 
 
         <table border="2" width="600">
 
             <tr >
-                <th class="cabecera"> Código</th>
-                <th class="cabecera">Nombre</th>
-                <th class="cabecera">Descripción</th>
-                <th class="cabecera">Acciones</th>
-
+                <th >Código</th>
+                <th >Nombre</th>
+                <th >Descripción</th>
+                <th >Acciones</th>
             </tr>
 
-            <c:forEach var="tempGeneros" items="${Generos }">
+            <c:forEach var="tempAlbum" items="${Album}">
 
                 <%-- Link actualizador para cada genero utilizando el campo clave --%>
-                <c:url var="linkCargar" value="LGenero">
+                <c:url var="linkCargar" value="LAlbum">
+
+                    <c:param name="id" value="${id}"></c:param>
 
                     <c:param name="Accion" value="Cargar"></c:param>
 
-                    <c:param name="Codigo" value="${tempGeneros.getIdGenero_musical()}"></c:param>
+                    <c:param name="Codigo" value="${tempAlbum.getIdAlbum()}"></c:param>
 
                 </c:url>
 
                 <%-- Link para eliminar cada genero utilizando el campo clave --%>
 
-                <c:url var="linkEliminar" value="LGenero">
+                <c:url var="linkEliminar" value="LAlbum">
+
+                    <c:param name="id" value="${id}"></c:param>
 
                     <c:param name="Accion" value="Eliminar"></c:param>
 
-                    <c:param name="Codigo" value="${tempGeneros.getIdGenero_musical()}"></c:param>
+                    <c:param name="Codigo" value="${tempAlbum.getIdAlbum()}"></c:param>
 
                 </c:url>
 
                 <tr>
-                    <td class="filas"> ${tempGeneros.getIdGenero_musical() } </td>
-                    <td class="filas"> ${tempGeneros.getNombre() } </td>
-                    <td class="filas"> ${tempGeneros.getDescripcion() } </td>
-                    <td class="filas">  
+                    <td> ${tempAlbum.getIdAlbum() } </td>
+                    <td> ${tempAlbum.getNombre() } </td>
+                    <td> ${tempAlbum.getDescripcion() } </td>
+                    <td>  
                         <a href="${linkCargar}"><img src="icons8-actualizar-15.png" width="15" height="15" alt="icons8-actualizar-15"/></a>
                         &nbsp;
                         <a href="${linkEliminar}"><img src="icons8-basura-32.png" width="20" height="20" alt="icons8-basura-32"/></a>
@@ -83,13 +69,16 @@
         <%-- Contenedor --%>
 
         <div id ="contenedorBoton">
-
+            <input type="hidden" name="id" value="${id}">
             <%-- Insertar --%>
+
             <input type="button" name = "btnInsertar" value="Insertar" 
-                   onclick="window.location.href = 'InsertarGeneros.jsp'"/>
+                   onclick="window.location.href = 'InsertarAlbum.jsp'"/>
+
             <br><br>          
 
         </div>
+
 
     </body>
 </html>

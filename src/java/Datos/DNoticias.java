@@ -1,5 +1,7 @@
 package Datos;
 
+import java.util.Date;
+
 public class DNoticias {
 
     //-----------------------Declaración de variables---------------------------//
@@ -10,6 +12,7 @@ public class DNoticias {
     private String _fk_usuario;
 
     //-----------------------Declaración de constructores---------------------------//
+   
     public DNoticias(int _idNoticias, String _Titulo, String _Contenido, String _Fecha, String _fk_usuario) {
         this._idNoticias = _idNoticias;
         this._Titulo = _Titulo;
@@ -19,10 +22,18 @@ public class DNoticias {
     }
     
      //-------------------Declaración de constructor para mostrar datos-----------------------//
-    public DNoticias(int _idNoticias, String _Titulo, String _Contenido) {
+    public DNoticias(int _idNoticias, String _Titulo, String _Contenido, String _Fecha) {
         this._idNoticias = _idNoticias;
         this._Titulo = _Titulo;
         this._Contenido = _Contenido;
+         this._Fecha = _Fecha;
+   }
+     //-------------------Declaración de constructor para cargar datos-----------------------//
+        public DNoticias(int _idNoticias, String _Titulo, String _Contenido) {
+        this._idNoticias = _idNoticias;
+        this._Titulo = _Titulo;
+        this._Contenido = _Contenido;
+         this._Fecha = _Fecha;
    }
 
     public DNoticias() {
