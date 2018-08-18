@@ -1,0 +1,9 @@
+#espacio {
+    float: left;
+    position: fixed;
+    height: 100%;
+    background-color:#2f3030;
+    margin-left: 0px;
+}
+
+
